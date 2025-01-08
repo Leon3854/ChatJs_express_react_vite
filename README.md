@@ -1,4 +1,6 @@
 # ChatJs_express_react_vite
+<img width="1349" alt="chat_main_image 2025-01-08 " src="https://github.com/user-attachments/assets/adb5b957-ffa8-4234-ad3c-5999d84b1d3a" />
+
 # Объем выполненных работ по созданию чата
 # 1. Технологический стек
 Frontend: React, Vite
