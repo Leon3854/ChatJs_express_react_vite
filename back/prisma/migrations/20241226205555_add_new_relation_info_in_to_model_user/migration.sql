@@ -1,0 +1,2 @@
+-- AddForeignKey
+ALTER TABLE "User" ADD CONSTRAINT "User_infoId_fkey" FOREIGN KEY ("infoId") REFERENCES "Info"("id") ON DELETE SET NULL ON UPDATE CASCADE;

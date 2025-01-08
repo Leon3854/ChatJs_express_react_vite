@@ -1,0 +1,4 @@
+.groups-item {
+	transition: all ease 0.5ms;
+	cursor: pointer;
+}

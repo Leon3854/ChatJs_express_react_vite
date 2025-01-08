@@ -1,0 +1,193 @@
+########
+.env
+#####
+NODE_ENV = development
+
+DATABASE_URL=postgresql://postgres:123456@localhost:5432/chat2211240946?schema=public
+
+JWT_SECRET =234sSDFxrWEce
+
+ACCESS_TOKEN = FetRwqAomDmc
+
+CORS_ORIGIN=http://localhost:5173
+
+#########
+.PRETTIERRC
+{
+	"trailingComma": "none",
+	"tabWidth": 2,
+	"useTabs": true,
+	"semi": false,
+	"singleQuote": true,
+	"arrowParens": "avoid",
+	"importOrder": [
+		"<THIRD_PARTY_MODULES>",
+		"/routes/",
+		"/middleware/",
+		"^../(.*)",
+		"^./(.*)"
+	],
+	"importOrderSeparation": true,
+	"importOrderSortSpecifiers": true
+}
+// trailingComma: У вас установлено значение none, что означает, что запятые в конце объектов и массивов не будут добавляться. Это может быть полезно для поддержания чистоты кода, но не влияет на функциональность.
+
+// tabWidth: Установлено значение 2, что означает, что ширина табуляции будет равна 2 пробелам. Это стандартная практика для JavaScript
+
+// useTabs: Установлено значение true, что означает, что вы используете табуляцию вместо пробелов для отступов. Это может вызывать проблемы, если в проекте используются смешанные отступы (табуляция и пробелы).
+
+// semi: Установлено значение false, что означает, что точки с запятой в конце строк не будут добавляться. Это может быть причиной проблем, если вы используете код, который ожидает наличие точек с запятой.
+
+// singleQuote: Установлено значение true, что означает, что вы используете одинарные кавычки вместо двойных.
+
+// arrowParens: Установлено значение avoid, что означает, что скобки вокруг единственного параметра стрелочной функции не будут добавляться.
+
+// importOrder: Настройки для упорядочивания импортов. Убедитесь, что пути указаны правильно и соответствуют вашей структуре проекта.
+
+
+#########
+schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+  email        String   @unique
+  name         String?
+  password     String
+  phone        String
+  images       String[]
+  avatar       String?
+  nickname     String?
+  refreshToken String?
+
+  chat_chat_creatorIdToUser Chat[]    @relation("Chat_creatorIdToUser")
+  messages                  Message[]
+  chats                     Chat[]    @relation("User Chats")
+  info                      Info?     @relation(fields: [infoId], references: [id]) // Добавлена связь с Info
+  infoId                    Int? // Поле для связи с Info
+}
+
+model Message {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  content   String
+  userId    Int
+  chatId    Int
+  chatName  String?
+  infoId    Int?
+  chat      Chat     @relation(fields: [chatId], references: [id])
+  info      Info?    @relation(fields: [infoId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model Chat {
+  id                        Int       @id @default(autoincrement())
+  createdAt                 DateTime  @default(now()) @map("created_at")
+  updatedAt                 DateTime  @updatedAt @map("updated_at")
+  name                      String?
+  phoneNumbers              String[]
+  creatorId                 Int
+  avatar                    String?
+  lastMessage               String?
+  type                      String
+  lastMessageId             Int?
+  user_chat_creatorIdToUser User      @relation("Chat_creatorIdToUser", fields: [creatorId], references: [id])
+  info                      Info?
+  messages                  Message[]
+  users                     User[]    @relation("User Chats")
+  messageCount              Int       @default(0)
+}
+
+model Info {
+  id                Int       @id @default(autoincrement())
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+  chatId            Int       @unique
+  messageCount      Int       @default(0)
+  lastOpened        DateTime?
+  lastMessageStatus Boolean?
+  chat              Chat      @relation(fields: [chatId], references: [id])
+  messages          Message[]
+  user              User[]
+}
+
+// 
+// 
+// 
+// 
+// 
+//
+
+// model User {
+//   id           Int      @id @default(autoincrement())
+//   createdAt    DateTime @default(now()) @map("created_at")
+//   updatedAt    DateTime @updatedAt @map("updated_at")
+//   email        String   @unique
+//   name         String?
+//   password     String
+//   phone        String
+//   images       String[]
+//   avatar       String?
+//   nickname     String?
+//   refreshToken String?
+
+//   chat_chat_creatorIdToUser Chat[]    @relation("Chat_creatorIdToUser")
+//   messages                  Message[]
+//   chats                     Chat[]    @relation("User Chats")
+//   infoId                    Int?
+// }
+
+// model Message {
+//   id        Int      @id @default(autoincrement())
+//   createdAt DateTime @default(now()) @map("created_at")
+//   updatedAt DateTime @updatedAt @map("updated_at")
+//   content   String
+//   userId    Int
+//   chatId    Int
+//   chatName  String?
+//   infoId    Int?
+//   chat      Chat     @relation(fields: [chatId], references: [id])
+//   info      Info?    @relation(fields: [infoId], references: [id])
+//   user      User     @relation(fields: [userId], references: [id])
+// }
+
+// model Chat {
+//   id                        Int       @id @default(autoincrement())
+//   createdAt                 DateTime  @default(now()) @map("created_at")
+//   updatedAt                 DateTime  @updatedAt @map("updated_at")
+//   name                      String?
+//   phoneNumbers              String[]
+//   creatorId                 Int
+//   avatar                    String?
+//   lastMessage               String?
+//   type                      String
+//   lastMessageId             Int?
+//   user_chat_creatorIdToUser User      @relation("Chat_creatorIdToUser", fields: [creatorId], references: [id])
+//   info                      Info?
+//   messages                  Message[]
+//   users                     User[]    @relation("User Chats")
+//   messageCount              Int       @default(0)
+// }
+
+// model Info {
+//   id                Int       @id @default(autoincrement())
+//   createdAt         DateTime  @default(now()) @map("created_at")
+//   updatedAt         DateTime  @updatedAt @map("updated_at")
+//   chatId            Int       @unique
+//   messageCount      Int       @default(0)
+//   lastOpened        DateTime?
+//   lastMessageStatus Boolean?
+//   chat              Chat      @relation(fields: [chatId], references: [id])
+//   messages          Message[]
+// }

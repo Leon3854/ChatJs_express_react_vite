@@ -1,0 +1,143 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+  email        String   @unique
+  name         String?
+  password     String
+  phone        String
+  images       String[]
+  avatar       String?
+  nickname     String?
+  refreshToken String?
+
+  chat_chat_creatorIdToUser Chat[]    @relation("Chat_creatorIdToUser")
+  messages                  Message[]
+  chats                     Chat[]    @relation("User Chats")
+  info                      Info?     @relation(fields: [infoId], references: [id]) // Добавлена связь с Info
+  infoId                    Int? // Поле для связи с Info
+}
+
+model Message {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  content   String
+  userId    Int
+  chatId    Int
+  chatName  String?
+  infoId    Int?
+  chat      Chat     @relation(fields: [chatId], references: [id])
+  info      Info?    @relation(fields: [infoId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model Chat {
+  id                        Int       @id @default(autoincrement())
+  createdAt                 DateTime  @default(now()) @map("created_at")
+  updatedAt                 DateTime  @updatedAt @map("updated_at")
+  name                      String?
+  phoneNumbers              String[]
+  creatorId                 Int
+  avatar                    String?
+  lastMessage               String?
+  type                      String
+  lastMessageId             Int?
+  user_chat_creatorIdToUser User      @relation("Chat_creatorIdToUser", fields: [creatorId], references: [id])
+  info                      Info?
+  messages                  Message[]
+  users                     User[]    @relation("User Chats")
+  messageCount              Int       @default(0)
+}
+
+model Info {
+  id                Int       @id @default(autoincrement())
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+  chatId            Int       @unique
+  messageCount      Int       @default(0)
+  lastOpened        DateTime?
+  lastMessageStatus Boolean?
+  chat              Chat      @relation(fields: [chatId], references: [id])
+  messages          Message[]
+  user              User[]
+}
+
+// 
+// 
+// 
+// 
+// 
+//
+
+// model User {
+//   id           Int      @id @default(autoincrement())
+//   createdAt    DateTime @default(now()) @map("created_at")
+//   updatedAt    DateTime @updatedAt @map("updated_at")
+//   email        String   @unique
+//   name         String?
+//   password     String
+//   phone        String
+//   images       String[]
+//   avatar       String?
+//   nickname     String?
+//   refreshToken String?
+
+//   chat_chat_creatorIdToUser Chat[]    @relation("Chat_creatorIdToUser")
+//   messages                  Message[]
+//   chats                     Chat[]    @relation("User Chats")
+//   infoId                    Int?
+// }
+
+// model Message {
+//   id        Int      @id @default(autoincrement())
+//   createdAt DateTime @default(now()) @map("created_at")
+//   updatedAt DateTime @updatedAt @map("updated_at")
+//   content   String
+//   userId    Int
+//   chatId    Int
+//   chatName  String?
+//   infoId    Int?
+//   chat      Chat     @relation(fields: [chatId], references: [id])
+//   info      Info?    @relation(fields: [infoId], references: [id])
+//   user      User     @relation(fields: [userId], references: [id])
+// }
+
+// model Chat {
+//   id                        Int       @id @default(autoincrement())
+//   createdAt                 DateTime  @default(now()) @map("created_at")
+//   updatedAt                 DateTime  @updatedAt @map("updated_at")
+//   name                      String?
+//   phoneNumbers              String[]
+//   creatorId                 Int
+//   avatar                    String?
+//   lastMessage               String?
+//   type                      String
+//   lastMessageId             Int?
+//   user_chat_creatorIdToUser User      @relation("Chat_creatorIdToUser", fields: [creatorId], references: [id])
+//   info                      Info?
+//   messages                  Message[]
+//   users                     User[]    @relation("User Chats")
+//   messageCount              Int       @default(0)
+// }
+
+// model Info {
+//   id                Int       @id @default(autoincrement())
+//   createdAt         DateTime  @default(now()) @map("created_at")
+//   updatedAt         DateTime  @updatedAt @map("updated_at")
+//   chatId            Int       @unique
+//   messageCount      Int       @default(0)
+//   lastOpened        DateTime?
+//   lastMessageStatus Boolean?
+//   chat              Chat      @relation(fields: [chatId], references: [id])
+//   messages          Message[]
+// }

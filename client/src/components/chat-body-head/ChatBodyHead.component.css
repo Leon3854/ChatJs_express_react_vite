@@ -1,0 +1,9 @@
+.chat-head-icon {
+	font-size: 23px;
+	outline: none;
+	transition: all ease 0.2s;
+}
+.chat-head-icon:hover {
+	outline: none;
+	color: orange;
+}
